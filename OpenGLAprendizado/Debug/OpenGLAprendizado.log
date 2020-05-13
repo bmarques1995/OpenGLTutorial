@@ -1,0 +1,19 @@
+﻿  Main.cpp
+Main.obj : error LNK2019: símbolo externo indefinido _gladLoadGLLoader referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwInit referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwTerminate referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwWindowHint referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwCreateWindow referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwWindowShouldClose referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwSetWindowShouldClose referenciado na função "void __cdecl processInput(struct GLFWwindow *)" (?processInput@@YAXPAUGLFWwindow@@@Z)
+Main.obj : error LNK2019: símbolo externo indefinido _glfwSetFramebufferSizeCallback referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwPollEvents referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwGetKey referenciado na função "void __cdecl processInput(struct GLFWwindow *)" (?processInput@@YAXPAUGLFWwindow@@@Z)
+Main.obj : error LNK2019: símbolo externo indefinido _glfwMakeContextCurrent referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwSwapBuffers referenciado na função _main
+Main.obj : error LNK2019: símbolo externo indefinido _glfwGetProcAddress referenciado na função _main
+Main.obj : error LNK2001: símbolos externos indefinidos _glad_glClear
+Main.obj : error LNK2001: símbolos externos indefinidos _glad_glClearColor
+Main.obj : error LNK2001: símbolos externos indefinidos _glad_glViewport
+C:\cpp\treinamento\OpenGLAprendizado\Dependencias\x64\GLFW\lib\glfw3.lib : warning LNK4272: o tipo de máquina da biblioteca 'x64' está em conflito com o tipo de máquina de destino 'x86'
+C:\cpp\treinamento\OpenGLAprendizado\Debug\OpenGLAprendizado.exe : fatal error LNK1120: 16 externo não resolvidos

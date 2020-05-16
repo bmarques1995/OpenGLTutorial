@@ -9,6 +9,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "classes/VertexArray.h"
+#include "classes/ElementBuffer.h"
+#include "classes/Shader.h"
+#include "classes/Renderer.h"
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 void ProcessInput(GLFWwindow* window);
@@ -25,6 +29,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 16);
 
 	GLFWwindow* window = glfwCreateWindow(800, 600, u8"Olá GLAD!", nullptr, nullptr);
 
@@ -40,49 +45,60 @@ int main()
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		return -2;
 
+	glEnable(GL_MULTISAMPLE);
+
+
 	glViewport(0, 0, 800, 600);
 
 	glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
 
+	int numberOfAttributes;
+	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &numberOfAttributes);
+
 	glm::vec3 positions[] =
 	{
-		glm::vec3(-0.5f, -0.5f, 0.0f),
-		glm::vec3(0.5f, -0.5f, 0.0f),
-		glm::vec3(0.0f,  0.5f, 0.0f)
+		glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f),
+		glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)
 	};
 
-	std::string vertexShader = readFile("src/shaders/triangle.vertex.glsl");
-	std::string fragmentShader = readFile("src/shaders/triangle.fragment.glsl");
+	unsigned indices[] =
+	{
+		0, 1, 2
+	};
 
-	unsigned programID = CreateShader(vertexShader, fragmentShader);
+	VertexArray vertexArray;
+	VertexBufferLayout vertexBufferLayout;
+	VertexBuffer vertexBuffer(positions, 3 * sizeof(glm::vec3));
 
-	unsigned VertexBuffer;
-	GLCall(glGenBuffers(1, &VertexBuffer));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, VertexBuffer));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW));
+	vertexBufferLayout.Push<float>(3);
+	vertexBufferLayout.Push<float>(3);
+	vertexArray.AddBuffer(vertexBuffer, vertexBufferLayout);
+	ElementBuffer elementBuffer(indices, 3);
 
-	unsigned VertexArray;
-	GLCall(glGenVertexArrays(1, &VertexArray));
-	GLCall(glBindVertexArray(VertexArray));
+	Shader shader("src/shaders/triangle.vertex.glsl", "src/shaders/triangle.fragment.glsl");
+	shader.Bind();
 
-	GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void *) 0));
+	Renderer renderer;
 
-	GLCall(glEnableVertexAttribArray(0));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-	GLCall(glBindVertexArray(0));
-	
+	shader.Unbind();
+	vertexArray.Unbind();
+	vertexBuffer.Unbind();
+
 	while (!glfwWindowShouldClose(window))
 	{
 		ProcessInput(window);
 
-		glClearColor(0.0f, 0.5f, 0.25f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		renderer.Clear();
 
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 		
+		shader.Bind();
+		vertexArray.Bind();
+		vertexBuffer.Bind();
 
-		GLCall(glUseProgram(programID));
-		GLCall(glBindVertexArray(VertexArray));
-		GLCall(glDrawArrays(GL_TRIANGLES, 0, 3));
+		renderer.Draw(vertexArray, elementBuffer, shader);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -107,6 +123,7 @@ std::string readFile(std::string path)
 {
 	std::ifstream fileBuffer(path);
 	std::stringstream strStream;
+	strStream << "";
 	std::string line;
 	while (getline(fileBuffer, line))
 		strStream << line << '\n';
@@ -163,16 +180,14 @@ unsigned CompileShader(std::string shaderSource, unsigned shaderType)
 	if (!success)
 	{
 		int lengthOfMessage;
-
 		GLCall(glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &lengthOfMessage));
-
-		char* infoLog = new char[(size_t) lengthOfMessage];
+		char* infoLog = new char[(size_t)lengthOfMessage];
 
 		GLCall(glGetShaderInfoLog(shaderID, lengthOfMessage, &lengthOfMessage, infoLog));
-
 		std::cout << infoLog << std::endl;
-
 		delete[] infoLog;
+
+		return 0;
 	}
 
 	return shaderID;

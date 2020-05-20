@@ -1,9 +1,9 @@
 #pragma once
 
 class ElementBuffer 
-{
+{  
 private:
-	unsigned m_RendererID;
+	unsigned m_BufferID;
 	unsigned m_Count;
 public:
 	ElementBuffer(unsigned* data, unsigned count);

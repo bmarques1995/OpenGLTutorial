@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Shader.h"
-#include "VertexArray.h"
 #include "ElementBuffer.h"
 
 class Renderer 
 {
 public:
-	void Draw(const VertexArray& vertexArray, const ElementBuffer& elementBuffer, const Shader& shader);
+	void Draw(const ElementBuffer& elementBuffer, unsigned vertexBuffer, unsigned vertexArray, const Shader& shader);
 	void Clear();
 };

@@ -87,6 +87,9 @@
     <ClCompile Include="src\classes\ElementBuffer.cpp" />
     <ClCompile Include="src\classes\Renderer.cpp" />
     <ClCompile Include="src\classes\Shader.cpp" />
+    <ClCompile Include="src\classes\VertexArray.cpp" />
+    <ClCompile Include="src\classes\VertexBuffer.cpp" />
+    <ClCompile Include="src\classes\VertexBufferLayout.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\vendor\glad\src\glad.c" />
     <ClCompile Include="src\vendor\glm\glm\detail\glm.cpp" />
@@ -95,6 +98,9 @@
     <ClInclude Include="src\classes\ElementBuffer.h" />
     <ClInclude Include="src\classes\Renderer.h" />
     <ClInclude Include="src\classes\Shader.h" />
+    <ClInclude Include="src\classes\VertexArray.h" />
+    <ClInclude Include="src\classes\VertexBuffer.h" />
+    <ClInclude Include="src\classes\VertexBufferLayout.h" />
     <ClInclude Include="src\ErrorHandler.h" />
     <ClInclude Include="src\vendor\glad\include\glad\glad.h" />
     <ClInclude Include="src\vendor\glad\include\KHR\khrplatform.h" />

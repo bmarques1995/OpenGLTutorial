@@ -42,6 +42,9 @@
     <ClCompile Include="src\classes\VertexBufferLayout.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
+    <ClCompile Include="src\vendor\stb_image\stb_image.cpp">
+      <Filter>Arquivos de Origem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\vendor\glad\include\glad\glad.h">
@@ -917,6 +920,9 @@
     <ClInclude Include="src\classes\VertexBufferLayout.h">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="src\vendor\stb_image\stb_image.h">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\vendor\glm\glm\detail\func_common.inl">
@@ -1332,5 +1338,10 @@
     <Text Include="src\vendor\glm\glm\CMakeLists.txt" />
     <Text Include="src\shaders\triangle.vertex.glsl" />
     <Text Include="src\shaders\triangle.fragment.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="src\textures\wall.jpg">
+      <Filter>Arquivos de Recurso</Filter>
+    </Image>
   </ItemGroup>
 </Project>

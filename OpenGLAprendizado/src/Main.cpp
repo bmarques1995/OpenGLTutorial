@@ -13,6 +13,7 @@
 #include "classes/VertexBufferLayout.h"
 
 #include "./vendor/stb_image/stb_image.h"
+#include "classes/Image.h"
 
 void FramebufferSizeCallback(GLFWwindow* window, int width, int height);
 void ProcessInput(GLFWwindow* window);
@@ -75,14 +76,16 @@ int main()
     // ------------------------------------------------------------------
     Point vertices[] = {
         // positions                    // colors
-        {glm::vec3(0.5f, -0.5f, 0.0f),   glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f) },  // bottom right
-        {glm::vec3(-0.5f, -0.5f, 0.0f),  glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) },  // bottom left
-        {glm::vec3(0.0f,  0.5f, 0.0f),   glm::vec4(0.0f, 0.0f, 1.0f, 1.0f), glm::vec2(0.5f, 1.0f) }  // top 
+        {glm::vec3(-0.5f, -0.5f, 0.0f),   glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f) },  
+        {glm::vec3(0.5f, -0.5f, 0.0f),  glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f) },  
+        {glm::vec3(-0.5f,  0.5f, 0.0f),   glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f) },
+        {glm::vec3(0.5f,  0.5f, 0.0f),   glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f) }  
     };
 
     unsigned indices[] =
     {
-        0, 1, 2
+        0, 1, 2,
+        1, 2, 3
     };
 
     VertexBuffer vertexBuffer(vertices, sizeof(vertices));
@@ -91,9 +94,9 @@ int main()
     vertexBufferLayout.Push<float>(3);
     vertexBufferLayout.Push<float>(4);
     vertexBufferLayout.Push<float>(2);
-    
-    ElementBuffer elementBuffer(indices, 3);
-    
+
+    ElementBuffer elementBuffer(indices, sizeof(indices)/ sizeof(unsigned));
+
     VertexArray vertexArray;
 
     vertexArray.AddBuffer(vertexBuffer, vertexBufferLayout);
@@ -104,25 +107,43 @@ int main()
 
 #pragma region Texture
 
-    unsigned texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
+    unsigned texture1;
+    unsigned texture2;
+
+    Image* image1 = new Image("src/textures/wall.png");
+    Image* image2 = new Image("src/textures/awesomeface.png");
+
+    glGenTextures(1, &texture1);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glTexImage2D(GL_TEXTURE_2D, 0, image1->CalculateInternalFormat(), image1->GetWidth(), image1->GetHeight(), 0, image1->CalculateFormat(), GL_UNSIGNED_BYTE, image1->GetImageBuffer());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glGenTextures(1, &texture2);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-    int width, height, bits_per_pixel;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* image = stbi_load("src/textures/wall.jpg", &width, &height, &bits_per_pixel, 3);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glTexImage2D(GL_TEXTURE_2D, 0, image2->CalculateInternalFormat(), image2->GetWidth(), image2->GetHeight(), 0, image2->CalculateFormat(), GL_UNSIGNED_BYTE, image2->GetImageBuffer());
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    if (image)
-        stbi_image_free(image);
+    shader.Bind();
+    shader.SetUniform1u("u_Texture1", 0);
+    shader.SetUniform1u("u_Texture2", 1);
     
+    
+    delete image2;
+    delete image1;
 #pragma endregion
 
     Renderer renderer;
@@ -139,6 +160,11 @@ int main()
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         renderer.Clear();
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
 
         // render the triangle
         renderer.Draw(elementBuffer, vertexArray, shader);

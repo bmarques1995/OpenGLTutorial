@@ -114,32 +114,32 @@ int main()
     Image* image2 = new Image("src/textures/awesomeface.png");
 
     glGenTextures(1, &texture1);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture1);
     
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture1);
     glTexImage2D(GL_TEXTURE_2D, 0, image1->CalculateInternalFormat(), image1->GetWidth(), image1->GetHeight(), 0, image1->CalculateFormat(), GL_UNSIGNED_BYTE, image1->GetImageBuffer());
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glGenTextures(1, &texture2);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture2);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
     
-    glBindTexture(GL_TEXTURE_2D, texture2);
     glTexImage2D(GL_TEXTURE_2D, 0, image2->CalculateInternalFormat(), image2->GetWidth(), image2->GetHeight(), 0, image2->CalculateFormat(), GL_UNSIGNED_BYTE, image2->GetImageBuffer());
     glGenerateMipmap(GL_TEXTURE_2D);
-
+    
     shader.Bind();
-    shader.SetUniform1u("u_Texture1", 0);
     shader.SetUniform1u("u_Texture2", 1);
+    shader.SetUniform1u("texture1", 0);
     
     
     delete image2;
